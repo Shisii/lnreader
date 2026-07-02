@@ -16,7 +16,7 @@ import { ChapterContextProvider, useChapterContext } from './ChapterContext';
 import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 import { useBackHandler } from '@hooks/index';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { StyleSheet, View } from 'react-native';
+import { Keyboard, StyleSheet, View } from 'react-native';
 import { Drawer } from 'react-native-drawer-layout';
 
 const Chapter = ({ route, navigation }: ChapterScreenProps) => {
@@ -69,13 +69,24 @@ export const ChapterContent = ({
   const theme = useTheme();
   const { pageReader = false, keepScreenOn } = useChapterGeneralSettings();
   const [bookmarked, setBookmarked] = useState<boolean>(chapter.bookmark ?? false);
+  const [searchVisible, setSearchVisible] = useState(false);
 
   useEffect(() => {
     setBookmarked(chapter.bookmark ?? false);
   }, [chapter]);
 
+  useEffect(() => {
+    setSearchVisible(false);
+  }, [chapter.id]);
+
   const { hidden, loading, error, webViewRef, hideHeader, refetch } =
     useChapterContext();
+
+  useEffect(() => {
+    if (hidden) {
+      setSearchVisible(false);
+    }
+  }, [hidden]);
 
   const scrollToStart = () =>
     requestAnimationFrame(() => {
@@ -95,6 +106,20 @@ export const ChapterContent = ({
     openDrawer();
     hideHeader();
   }, [hideHeader, openDrawer]);
+
+  const handleReaderTouchStart = useCallback(() => {
+    if (searchVisible) {
+      Keyboard.dismiss();
+    }
+  }, [searchVisible]);
+
+  const handleReaderPress = useCallback(() => {
+    if (searchVisible) {
+      setSearchVisible(false);
+      return;
+    }
+    hideHeader();
+  }, [hideHeader, searchVisible]);
 
   if (error) {
     return (
@@ -128,7 +153,10 @@ export const ChapterContent = ({
       {loading ? (
         <ChapterLoadingScreen />
       ) : (
-        <WebViewReader onPress={hideHeader} />
+        <WebViewReader
+          onPress={handleReaderPress}
+          onTouchStart={handleReaderTouchStart}
+        />
       )}
       <ReaderBottomSheetV2 bottomSheetRef={readerSheetRef} />
       {!hidden ? (
@@ -138,6 +166,8 @@ export const ChapterContent = ({
             theme={theme}
             bookmarked={bookmarked}
             setBookmarked={setBookmarked}
+            searchVisible={searchVisible}
+            setSearchVisible={setSearchVisible}
           />
           <ReaderFooter
             readerSheetRef={readerSheetRef}

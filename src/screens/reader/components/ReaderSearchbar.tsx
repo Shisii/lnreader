@@ -6,10 +6,9 @@ import { ThemeColors } from '@theme/types';
 
 interface ReaderSearchbarProps {
   theme: ThemeColors;
-  onClose: () => void;
 }
 
-const ReaderSearchbar = ({ theme, onClose }: ReaderSearchbarProps) => {
+const ReaderSearchbar = ({ theme }: ReaderSearchbarProps) => {
   const inputRef = useRef<TextInput>(null);
   const [searchText, setSearchText] = useState('');
 

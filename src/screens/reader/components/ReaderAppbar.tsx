@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import color from 'color';
 
@@ -20,6 +20,8 @@ interface ReaderAppbarProps {
   goBack: () => void;
   bookmarked: boolean;
   setBookmarked: React.Dispatch<React.SetStateAction<boolean>>;
+  searchVisible: boolean;
+  setSearchVisible: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const fastOutSlowIn = Easing.bezier(0.4, 0.0, 0.2, 1.0);
@@ -29,14 +31,11 @@ const ReaderAppbar = ({
   theme,
   bookmarked,
   setBookmarked,
+  searchVisible,
+  setSearchVisible,
 }: ReaderAppbarProps) => {
   const { chapter, novel } = useChapterContext();
   const { statusBarHeight } = useNovelLayout();
-  const [searchVisible, setSearchVisible] = useState(false);
-
-  useEffect(() => {
-    setSearchVisible(false);
-  }, [chapter.id]);
 
   const entering = () => {
     'worklet';
@@ -129,12 +128,7 @@ const ReaderAppbar = ({
           style={styles.bookmark}
         />
       </View>
-      {searchVisible ? (
-        <ReaderSearchbar
-          theme={theme}
-          onClose={() => setSearchVisible(false)}
-        />
-      ) : null}
+      {searchVisible ? <ReaderSearchbar theme={theme} /> : null}
     </Animated.View>
   );
 };

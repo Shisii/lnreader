@@ -44,6 +44,7 @@ type WebViewPostEvent = {
 
 type WebViewReaderProps = {
   onPress(): void;
+  onTouchStart?(): void;
 };
 
 const onLogMessage = (payload: { nativeEvent: { data: string } }) => {
@@ -63,7 +64,10 @@ const assetsUriPrefix = __DEV__
   ? 'http://localhost:8081/assets'
   : 'file:///android_asset';
 
-const WebViewReader: React.FC<WebViewReaderProps> = ({ onPress }) => {
+const WebViewReader: React.FC<WebViewReaderProps> = ({
+  onPress,
+  onTouchStart,
+}) => {
   const {
     novel,
     chapter,
@@ -310,6 +314,7 @@ const WebViewReader: React.FC<WebViewReaderProps> = ({ onPress }) => {
   return (
     <WebView
       ref={webViewRef}
+      onTouchStart={onTouchStart}
       style={{ backgroundColor: readerSettings.theme }}
       allowFileAccess={true}
       originWhitelist={['*']}
