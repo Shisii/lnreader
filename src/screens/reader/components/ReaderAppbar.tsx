@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import color from 'color';
 
@@ -13,6 +13,7 @@ import { ThemeColors } from '@theme/types';
 import { bookmarkChapter } from '@database/queries/ChapterQueries';
 import { useChapterContext } from '../ChapterContext';
 import { useNovelLayout } from '@screens/novel/NovelContext';
+import ReaderSearchbar from './ReaderSearchbar';
 
 interface ReaderAppbarProps {
   theme: ThemeColors;
@@ -31,6 +32,11 @@ const ReaderAppbar = ({
 }: ReaderAppbarProps) => {
   const { chapter, novel } = useChapterContext();
   const { statusBarHeight } = useNovelLayout();
+  const [searchVisible, setSearchVisible] = useState(false);
+
+  useEffect(() => {
+    setSearchVisible(false);
+  }, [chapter.id]);
 
   const entering = () => {
     'worklet';
@@ -106,6 +112,13 @@ const ReaderAppbar = ({
           </Text>
         </View>
         <IconButtonV2
+          name={searchVisible ? 'magnify-close' : 'magnify'}
+          size={24}
+          onPress={() => setSearchVisible(current => !current)}
+          color={theme.onSurface}
+          theme={theme}
+        />
+        <IconButtonV2
           name={bookmarked ? 'bookmark' : 'bookmark-outline'}
           size={24}
           onPress={() => {
@@ -116,6 +129,12 @@ const ReaderAppbar = ({
           style={styles.bookmark}
         />
       </View>
+      {searchVisible ? (
+        <ReaderSearchbar
+          theme={theme}
+          onClose={() => setSearchVisible(false)}
+        />
+      ) : null}
     </Animated.View>
   );
 };
