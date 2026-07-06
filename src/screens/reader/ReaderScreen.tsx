@@ -111,6 +111,19 @@ export const ChapterContent = ({
     }
   }, [hidden]);
 
+  useEffect(() => {
+    if (hidden) {
+      return;
+    }
+
+    webViewRef.current?.injectJavaScript(`
+      if (window.reader?.hidden) {
+        window.reader.hidden.val = ${searchVisible ? 'true' : 'false'};
+      }
+      true;
+    `);
+  }, [hidden, searchVisible, webViewRef]);
+
   const scrollToStart = () =>
     requestAnimationFrame(() => {
       webViewRef?.current?.injectJavaScript(
@@ -197,12 +210,14 @@ export const ChapterContent = ({
             resetSearchResult={resetSearchResult}
             resetSearch={resetSearch}
           />
-          <ReaderFooter
-            readerSheetRef={readerSheetRef}
-            scrollToStart={scrollToStart}
-            navigation={navigation}
-            openDrawer={openDrawerI}
-          />
+          {!searchVisible ? (
+            <ReaderFooter
+              readerSheetRef={readerSheetRef}
+              scrollToStart={scrollToStart}
+              navigation={navigation}
+              openDrawer={openDrawerI}
+            />
+          ) : null}
         </>
       ) : null}
     </View>
