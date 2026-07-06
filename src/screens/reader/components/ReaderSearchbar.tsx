@@ -18,6 +18,7 @@ interface ReaderSearchbarProps {
 
 const SEARCH_DEBOUNCE_MS = 300;
 const MIN_SEARCH_LENGTH = 3;
+const SPECIAL_CHARACTER_REGEX = /[^\p{L}\p{N}\s]/u;
 
 const ReaderSearchbar = ({
   theme,
@@ -33,8 +34,12 @@ const ReaderSearchbar = ({
     useChapterContext();
   const normalizedSearchText = searchText.trim();
   const hasSearchText = normalizedSearchText.length > 0;
+  const hasSpecialCharacter =
+    SPECIAL_CHARACTER_REGEX.test(normalizedSearchText);
   const isSearchBlocked =
-    hasSearchText && normalizedSearchText.length < MIN_SEARCH_LENGTH;
+    hasSearchText &&
+    normalizedSearchText.length < MIN_SEARCH_LENGTH &&
+    !hasSpecialCharacter;
   const hasCurrentSearchResult = searchResult.query === normalizedSearchText;
   const hasMatches = hasCurrentSearchResult && searchResult.renderedTotal > 0;
   const resultTotalText = searchResult.isTruncated
@@ -68,7 +73,13 @@ const ReaderSearchbar = ({
 
       const normalizedText = text.trim();
 
-      if (!normalizedText || normalizedText.length < MIN_SEARCH_LENGTH) {
+      const containsSpecialCharacter =
+        SPECIAL_CHARACTER_REGEX.test(normalizedText);
+
+      if (
+        !normalizedText ||
+        (normalizedText.length < MIN_SEARCH_LENGTH && !containsSpecialCharacter)
+      ) {
         clearChapterSearch();
         return;
       }

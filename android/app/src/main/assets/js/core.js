@@ -768,6 +768,7 @@ window.readerSearch = new (function () {
   const MIN_QUERY_LENGTH = 3;
   const SEGMENT_BATCH_SIZE = 80;
   const MAX_RENDERED_MATCHES = 1500;
+  const SPECIAL_CHARACTER_REGEX = /[^\p{L}\p{N}\s]/u;
   const INLINE_TEXT_ELEMENTS = new Set([
     'A',
     'ABBR',
@@ -1141,7 +1142,10 @@ window.readerSearch = new (function () {
     this.resetMatches();
     this.query = term;
 
-    if (!term || term.length < MIN_QUERY_LENGTH) {
+    if (
+      !term ||
+      (term.length < MIN_QUERY_LENGTH && !SPECIAL_CHARACTER_REGEX.test(term))
+    ) {
       this.emit(term);
       return;
     }
