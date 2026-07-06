@@ -5,6 +5,7 @@ import { IconButtonV2 } from '@components';
 import { ThemeColors } from '@theme/types';
 import { useChapterContext } from '../ChapterContext';
 import { ReaderSearchResult } from '../types';
+import { getString } from '@strings/translations';
 
 interface ReaderSearchbarProps {
   theme: ThemeColors;
@@ -128,7 +129,7 @@ const ReaderSearchbar = ({
           autoCorrect={false}
           onChangeText={handleSearchTextChange}
           onSubmitEditing={handleSubmitEditing}
-          placeholder="Search chapter"
+          placeholder={getString('readerScreen.searchPlaceholder')}
           placeholderTextColor={theme.onSurfaceVariant}
           returnKeyType="search"
           selectionColor={theme.primary}
