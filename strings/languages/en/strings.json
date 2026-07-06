@@ -496,6 +496,7 @@
     "nextChapter": "Next: %{name}",
     "noNextChapter": "There's no next chapter",
     "noPreviousChapter": "There's no previous chapter",
+    "searchMinLength": "Enter at least %{count} characters to search",
     "searchPlaceholder": "Search chapter"
   },
   "readerSettings": {

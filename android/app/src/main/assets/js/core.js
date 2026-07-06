@@ -765,7 +765,7 @@ window.addEventListener('load', () => {
 })();
 
 window.readerSearch = new (function () {
-  const MIN_QUERY_LENGTH = 1;
+  const MIN_QUERY_LENGTH = 3;
   const SEGMENT_BATCH_SIZE = 80;
   const MAX_RENDERED_MATCHES = 1500;
   const INLINE_TEXT_ELEMENTS = new Set([

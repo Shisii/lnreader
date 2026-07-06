@@ -17,6 +17,7 @@ interface ReaderSearchbarProps {
 }
 
 const SEARCH_DEBOUNCE_MS = 300;
+const MIN_SEARCH_LENGTH = 3;
 
 const ReaderSearchbar = ({
   theme,
@@ -32,6 +33,8 @@ const ReaderSearchbar = ({
     useChapterContext();
   const normalizedSearchText = searchText.trim();
   const hasSearchText = normalizedSearchText.length > 0;
+  const isSearchBlocked =
+    hasSearchText && normalizedSearchText.length < MIN_SEARCH_LENGTH;
   const hasCurrentSearchResult = searchResult.query === normalizedSearchText;
   const hasMatches = hasCurrentSearchResult && searchResult.renderedTotal > 0;
   const resultTotalText = searchResult.isTruncated
@@ -63,7 +66,9 @@ const ReaderSearchbar = ({
       resetSearchResult();
       clearPendingSearch();
 
-      if (!text.trim()) {
+      const normalizedText = text.trim();
+
+      if (!normalizedText || normalizedText.length < MIN_SEARCH_LENGTH) {
         clearChapterSearch();
         return;
       }
@@ -91,6 +96,11 @@ const ReaderSearchbar = ({
 
   const handleSubmitEditing = useCallback(() => {
     clearPendingSearch();
+    if (isSearchBlocked) {
+      clearChapterSearch();
+      return;
+    }
+
     if (hasMatches) {
       navigateChapterSearch('NEXT', searchText);
       return;
@@ -102,6 +112,8 @@ const ReaderSearchbar = ({
     clearPendingSearch,
     hasMatches,
     hasSearchText,
+    isSearchBlocked,
+    clearChapterSearch,
     navigateChapterSearch,
     searchChapterText,
     searchText,
@@ -137,7 +149,7 @@ const ReaderSearchbar = ({
           submitBehavior="submit"
           value={searchText}
         />
-        {hasSearchText ? (
+        {hasSearchText && !isSearchBlocked ? (
           <Text style={[styles.resultText, { color: theme.onSurfaceVariant }]}>
             {searchResult.current}/{resultTotalText}
           </Text>
@@ -170,6 +182,16 @@ const ReaderSearchbar = ({
           />
         ) : null}
       </View>
+      {isSearchBlocked ? (
+        <Text
+          style={[styles.helperText, { color: theme.onSurfaceVariant }]}
+          numberOfLines={1}
+        >
+          {getString('readerScreen.searchMinLength', {
+            count: MIN_SEARCH_LENGTH,
+          })}
+        </Text>
+      ) : null}
     </View>
   );
 };
@@ -194,6 +216,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     minWidth: 40,
     textAlign: 'center',
+  },
+  helperText: {
+    fontSize: 12,
+    marginTop: 4,
+    paddingHorizontal: 12,
   },
   searchIcon: {
     marginLeft: 8,

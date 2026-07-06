@@ -411,6 +411,7 @@ export interface StringMap {
   'readerScreen.nextChapter': 'string';
   'readerScreen.noNextChapter': 'string';
   'readerScreen.noPreviousChapter': 'string';
+  'readerScreen.searchMinLength': 'string';
   'readerScreen.searchPlaceholder': 'string';
   'readerSettings.autoScrollInterval': 'string';
   'readerSettings.autoScrollOffset': 'string';
